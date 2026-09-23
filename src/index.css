@@ -1,0 +1,373 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Decorative full-bleed backgrounds for the landing page. */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.bg-dots {
+  background-image: radial-gradient(rgba(99, 102, 241, 0.18) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+.bg-dots-light {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+}
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* ============================================================================
+   Liquid Glass — an approximation of Apple's translucent "Liquid Glass" material
+   (WWDC '25). Each surface layers: a frosted backdrop blur with boosted
+   saturation (vibrancy), a top-down specular sheen, a fine light edge, and a
+   soft depth shadow that separates it from the content behind. Used for the
+   navigation / control layer (bars, panels, buttons), never on the canvas.
+   ============================================================================ */
+.lg-surface {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(255, 255, 255, 0.18) 36%,
+      rgba(255, 255, 255, 0.06) 100%
+    ),
+    rgba(255, 255, 255, 0.52);
+  backdrop-filter: blur(20px) saturate(185%);
+  -webkit-backdrop-filter: blur(20px) saturate(185%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -10px 22px rgba(255, 255, 255, 0.12),
+    0 12px 34px -14px rgba(15, 23, 42, 0.32),
+    0 2px 6px rgba(15, 23, 42, 0.07);
+}
+
+/* Smaller interactive glass (buttons / controls): a touch crisper. */
+.lg-control {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.08) 100%
+    ),
+    rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -6px 12px rgba(255, 255, 255, 0.12),
+    0 6px 16px -8px rgba(15, 23, 42, 0.28),
+    0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  /* Graceful fallback where backdrop-filter is unsupported. */
+  .lg-surface { background: rgba(255, 255, 255, 0.9); }
+  .lg-control { background: rgba(255, 255, 255, 0.85); }
+}
+
+/* Studio editor backdrop: a deeper cool gray so the white canvas card and any
+   shirt color read clearly, with faint brand glows and a subtle dot texture. */
+.studio-bg {
+  background-color: #d6dbe6;
+  background-image:
+    radial-gradient(1200px 600px at 15% -10%, rgba(99, 102, 241, 0.12), transparent 60%),
+    radial-gradient(1000px 500px at 110% 0%, rgba(168, 85, 247, 0.12), transparent 55%),
+    radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+  background-size: auto, auto, 22px 22px;
+}
+
+/* The canvas mounting surface under the shirt mockup: a soft studio gray
+   (like a photographer's sweep) — intentionally not white, so white shirts
+   don't disappear, dark shirts still stand out, and crisp shirt edges read
+   clearly against it. The default (overridden at runtime per shirt color). */
+.canvas-stage-surface {
+  background:
+    radial-gradient(140% 120% at 50% 0%, #eef1f6 0%, #e4e8f0 55%, #d7dce6 100%);
+}
+
+/* Let touch drags manipulate Fabric objects (move/scale/rotate) instead of
+   panning/zooming the page when the gesture starts on the design canvas. */
+.canvas-stage-surface canvas,
+.canvas-stage-surface .canvas-container {
+  touch-action: none;
+}
+
+/* Tooltip bubble (rendered in a portal). */
+.tooltip-bubble {
+  z-index: 80;
+  pointer-events: none;
+  width: max-content;
+  max-width: 15rem;
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-align: center;
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px) saturate(160%);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+  box-shadow: 0 8px 22px -8px rgba(2, 6, 23, 0.6), 0 2px 6px rgba(2, 6, 23, 0.35);
+  animation: tooltip-in 120ms ease-out;
+}
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* Zoom control buttons. */
+.zoom-btn {
+  @apply flex h-8 w-8 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40;
+}
+
+/* Subtle checkerboard so transparent areas of the design canvas read clearly. */
+.canvas-checkerboard {
+  background-image:
+    linear-gradient(45deg, #e2e8f0 25%, transparent 25%),
+    linear-gradient(-45deg, #e2e8f0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e2e8f0 75%),
+    linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+}
+
+@layer components {
+  .btn {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.97];
+  }
+  /* Tinted Liquid Glass: keeps the brand indigo but with a glassy specular sheen. */
+  .btn-primary {
+    @apply btn text-white;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.05) 48%, rgba(255, 255, 255, 0) 100%),
+      linear-gradient(180deg, #6e72f3 0%, #4f46e5 100%);
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    backdrop-filter: blur(8px) saturate(160%);
+    -webkit-backdrop-filter: blur(8px) saturate(160%);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.65),
+      inset 0 -6px 12px rgba(49, 46, 129, 0.35),
+      0 10px 22px -8px rgba(79, 70, 229, 0.6),
+      0 2px 5px rgba(79, 70, 229, 0.32);
+  }
+  .btn-primary:hover {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.75),
+      inset 0 -6px 12px rgba(49, 46, 129, 0.3),
+      0 14px 28px -8px rgba(79, 70, 229, 0.7),
+      0 2px 6px rgba(79, 70, 229, 0.36);
+  }
+  /* Neutral Liquid Glass controls. */
+  .btn-secondary {
+    @apply btn lg-control text-slate-700;
+  }
+  .btn-secondary:hover {
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 1),
+      inset 0 -6px 12px rgba(255, 255, 255, 0.18),
+      0 8px 20px -8px rgba(15, 23, 42, 0.32),
+      0 1px 3px rgba(15, 23, 42, 0.1);
+  }
+  .btn-ghost {
+    @apply btn text-slate-600;
+    border: 1px solid transparent;
+  }
+  .btn-ghost:hover {
+    @apply text-slate-900;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.12) 100%),
+      rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.85), 0 4px 12px -6px rgba(15, 23, 42, 0.25);
+  }
+  /* Destructive Liquid Glass action (delete / clear). */
+  .btn-danger {
+    @apply btn text-white;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.04) 48%, rgba(255, 255, 255, 0) 100%),
+      linear-gradient(180deg, #f2566f 0%, #e11d48 100%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.6),
+      inset 0 -6px 12px rgba(136, 19, 55, 0.35),
+      0 10px 22px -8px rgba(225, 29, 72, 0.6),
+      0 2px 5px rgba(225, 29, 72, 0.3);
+  }
+  .btn-danger:hover {
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.7),
+      inset 0 -6px 12px rgba(136, 19, 55, 0.3),
+      0 14px 28px -8px rgba(225, 29, 72, 0.7),
+      0 2px 6px rgba(225, 29, 72, 0.36);
+  }
+  .tool-btn {
+    @apply relative flex h-11 w-11 items-center justify-center rounded-xl border border-transparent text-slate-600 transition-all duration-150 hover:text-slate-900 active:scale-[0.95] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-600 disabled:active:scale-100;
+  }
+  .tool-btn:hover {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.15) 100%),
+      rgba(255, 255, 255, 0.4);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 4px 10px -6px rgba(15, 23, 42, 0.25);
+  }
+  .tool-btn-active {
+    @apply text-indigo-700;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.1) 100%),
+      rgba(99, 102, 241, 0.16) !important;
+    border-color: rgba(129, 140, 248, 0.55) !important;
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.9),
+      0 6px 14px -8px rgba(79, 70, 229, 0.5) !important;
+  }
+  .panel {
+    @apply lg-surface rounded-2xl;
+  }
+  .field-label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500;
+  }
+  .input {
+    @apply w-full rounded-lg border border-white/60 px-3 py-2 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  /* Segmented control (e.g. Front / Back, sleeve picker) as a glass capsule. */
+  .seg {
+    @apply lg-control inline-flex rounded-full p-1;
+  }
+  .seg-item {
+    @apply rounded-full px-5 py-1.5 text-sm font-semibold capitalize text-slate-500 transition-all duration-150 hover:text-slate-700;
+  }
+  .seg-item-active {
+    @apply text-indigo-700;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.7) 100%);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 1),
+      0 4px 10px -4px rgba(15, 23, 42, 0.22);
+  }
+}
+
+/* ============================================================================
+   Motion — entrance animations for toasts and modals.
+   ============================================================================ */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.toast-in {
+  animation: toast-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.modal-in {
+  animation: modal-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.fade-in {
+  animation: fade-in 240ms ease-out;
+}
+
+/* ============================================================================
+   Refined scrollbars for the editor panels (WebKit + Firefox).
+   ============================================================================ */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.4) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.55);
+  background-clip: content-box;
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

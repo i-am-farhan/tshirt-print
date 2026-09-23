@@ -1,0 +1,17 @@
+{
+  "name": "Tee Studio — Custom T-Shirt Designer",
+  "short_name": "Tee Studio",
+  "description": "Design custom T-shirts in your browser: text, artwork, freehand drawing, and print-ready exports.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
